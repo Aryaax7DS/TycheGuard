@@ -173,19 +173,47 @@ module.exports = (client) => {
         ]
       }).catch(() => {});
 
-      const logChannel = await client.channels.fetch(VERIFY_LOG_CHANNEL_ID);
-      await logChannel.send({
-        embeds: [
-          new EmbedBuilder()
-            .setColor('#00bfff')
-            .setTitle('🟢 USER VERIFIED')
-            .addFields(
-              { name: 'User', value: interaction.user.tag, inline: true },
-              { name: 'Account Age', value: `${accountAgeDays.toFixed(1)} hari`, inline: true }
-            )
-            .setTimestamp()
-        ]
-      });
+const logChannel = await client.channels.fetch(VERIFY_LOG_CHANNEL_ID);
+
+const now = Math.floor(Date.now() / 1000); // timestamp Discord
+
+await logChannel.send({
+  embeds: [
+    new EmbedBuilder()
+      .setColor('#00bfff')
+      .setAuthor({
+        name: 'Tyche Verification System',
+        iconURL: client.user.displayAvatarURL()
+      })
+      .setTitle('🟢 USER VERIFIED SUCCESSFULLY')
+      .setDescription(
+        `Sebuah akun baru berhasil melewati sistem verifikasi.\n` +
+        `Semua pengecekan telah **lulus** ✅`
+      )
+      .addFields(
+        {
+          name: '👤 User',
+          value: `${interaction.user.tag}\n\`${interaction.user.id}\``,
+          inline: true
+        },
+        {
+          name: '📆 Account Age',
+          value: `${accountAgeDays.toFixed(1)} hari`,
+          inline: true
+        },
+        {
+          name: '⏰ Verified At',
+          value: `<t:${now}:F>\n(<t:${now}:R>)`,
+          inline: false
+        }
+      )
+      .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
+      .setFooter({
+        text: 'Tyche Community • Verification Log'
+      })
+      .setTimestamp()
+  ]
+});
 
     } catch (err) {
       console.error(err);
